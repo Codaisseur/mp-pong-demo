@@ -228,7 +228,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <AppBar title="Rock Paper Scissors"/>
+        <AppBar title="Rock Paper Scissors" titleStyle={{ textAlign: 'center' }}/>
         <div style={containerStyles}>
           { this.state.currentPlayer !== null &&
             <h1 style={headerStyle}>Hi, {this.state.currentPlayer}</h1> }
