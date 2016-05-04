@@ -25,6 +25,7 @@ npm run build
 printf "Copying over the dist to the deploys..."
 cp -r dist deploys/static
 cp index.html deploys/
+cp -r images deploys/
 echo "done!"
 
 echo "Your build is ready to be deployed from ./deploys"

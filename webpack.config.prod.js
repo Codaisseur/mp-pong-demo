@@ -29,6 +29,11 @@ module.exports = {
       test: /\.js$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
+    },{
+      test: /\.(svg|png|gif)$/, loader: "file-loader"
+    }],
+    postLoaders: [{
+      loader: "transform?brfs"
     }]
   }
 };

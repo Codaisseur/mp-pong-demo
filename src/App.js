@@ -3,7 +3,8 @@ import GameModel from './models/GameModel';
 import NewPlayerComponent from './components/NewPlayerComponent';
 import NewGameComponent from './components/NewGameComponent';
 import GameListComponent from './components/GameListComponent';
-import PlayerMoveComponent from './components/PlayerMoveComponent';
+import PongGameComponent from './components/PongGameComponent';
+import PlayerBatComponent from './components/PlayerBatComponent';
 import Utils from './lib/Utils';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import Theme from './lib/Theme';
@@ -81,7 +82,7 @@ class App extends React.Component {
             currentGame: game
           });
           if (game.winner === null) {
-            component.determineWinner();
+            // component.determineWinner();
           }
         }
       });
@@ -117,118 +118,20 @@ class App extends React.Component {
     }
   }
 
-  determineWinner() {
-    let moveOne = this.state.currentGame.playerOneMove;
-    let moveTwo = this.state.currentGame.playerTwoMove;
-    if (moveOne !== null && moveTwo !== null) {
-      if (moveOne === moveTwo) {
-        this.storeWinner("draw");
-      }
-
-      if (moveOne === "Rock") {
-        if (moveTwo === "Scissors") {
-          this.storeWinner(this.state.currentGame.playerOne);
-        }
-
-        if (moveTwo === "Paper") {
-          this.storeWinner(this.state.currentGame.playerTwo);
-        }
-      }
-
-      if (moveOne === "Paper") {
-        if (moveTwo === "Rock") {
-          this.storeWinner(this.state.currentGame.playerOne);
-        }
-
-        if (moveTwo === "Scissors") {
-          this.storeWinner(this.state.currentGame.playerTwo);
-        }
-      }
-
-      if (moveOne === "Scissors") {
-        if (moveTwo === "Rock") {
-          this.storeWinner(this.state.currentGame.playerTwo);
-        }
-
-        if (moveTwo === "Paper") {
-          this.storeWinner(this.state.currentGame.playerOne);
-        }
-      }
-    }
-  }
-
-  storeWinner(winner) {
-    if (this.state.currentGame.winner === null) {
-      this.games.save(this.state.currentGame, { winner: winner });
-    }
-  }
-
-  makeMove(move) {
-    if (this.state.currentGame.playerOne === this.state.currentPlayer) {
-      this.games.save(this.state.currentGame, { playerOneMove: move });
-    }
-
-    if (this.state.currentGame.playerTwo === this.state.currentPlayer) {
-      this.games.save(this.state.currentGame, { playerTwoMove: move });
-    }
-  }
-
-  winningMove() {
-    if (this.state.currentGame.playerOne === this.state.currentGame.winner) {
-      return this.state.currentGame.playerOneMove;
-    }
-
-    if (this.state.currentGame.playerTwo === this.state.currentGame.winner) {
-      return this.state.currentGame.playerTwoMove;
-    }
-  }
-
-  losingMove() {
-    if (this.state.currentGame.playerTwo !== this.state.currentGame.winner) {
-      return this.state.currentGame.playerTwoMove;
-    }
-
-    if (this.state.currentGame.playerOne !== this.state.currentGame.winner) {
-      return this.state.currentGame.playerOneMove;
-    }
-  }
-
-  yourMove() {
-    if (this.state.currentGame !== null) {
-      let currentPlayer = this.state.currentPlayer;
-      let playerOne = this.state.currentGame.playerOne;
-      let playerTwo = this.state.currentGame.playerTwo;
-
-      if (playerOne === currentPlayer) {
-        return this.state.currentGame.playerOneMove;
-      }
-
-      if (playerTwo === currentPlayer) {
-        return this.state.currentGame.playerTwoMove;
-      }
-    }
-
-    return "";
-  }
-
-  winnerSentence() {
-    if (this.state.currentGame.winner === "draw") {
-      return `${this.winningMove()} draws ${this.losingMove()}`;
-    } else {
-      return `${this.winningMove()} trumps ${this.losingMove()}`;
-    }
-  }
-
   clearCurrentGame() {
     this.setState({
       currentGame: null
     });
   }
 
+  saveGame(game, props) {
+    this.games.save(game, props);
+  }
+
   render() {
     return (
       <div>
-        <AppBar title="Rock Paper Scissors" titleStyle={{ textAlign: 'center' }}/>
+        <AppBar title="P0ngz0rz" titleStyle={{ textAlign: 'center' }}/>
         <div style={containerStyles}>
           { this.state.currentPlayer !== null &&
             <h1 style={headerStyle}>Hi, {this.state.currentPlayer}</h1> }
@@ -242,29 +145,10 @@ class App extends React.Component {
           { this.state.currentPlayer && this.state.currentGame === null &&
             <NewGameComponent onCreate={this.createGame.bind(this)}/> }
 
-          { this.state.currentGame !== null && <Paper style={paperStyle} zDepth={1} rounded={false}>
-            <p>Player one: {this.state.currentGame.playerOne}</p>
-            <p>Player two: {this.state.currentGame.playerTwo}</p>
-
-            { this.state.currentGame.winner === null && <div style={playerMoveContainerStyle}>
-              <h2 style={playerMoveStyle}>&nbsp;{this.yourMove()}</h2>
-              <PlayerMoveComponent move="Rock" onClick={this.makeMove.bind(this)} />
-              <PlayerMoveComponent move="Paper" onClick={this.makeMove.bind(this)} />
-              <PlayerMoveComponent move="Scissors" onClick={this.makeMove.bind(this)} />
-            </div> }
-
-            { this.state.currentGame.winner !== null && <div>
-              <h1>{this.state.currentGame.winner} won!</h1>
-              <p>{this.winnerSentence()}</p>
-            </div> }
-
-            <div style={headerStyle}>
-              <RaisedButton onClick={this.clearCurrentGame.bind(this)} label="Back" secondary={true} style={buttonStyle}/>
-            </div>
-          </Paper>}
+          { this.state.currentGame !== null &&
+            <PongGameComponent game={this.state.currentGame} player={this.state.currentPlayer} onChange={this.saveGame.bind(this)}/> }
         </div>
-      </div>
-        );
+      </div>);
   }
 }
 

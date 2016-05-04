@@ -2,7 +2,7 @@ import SocketClient from 'socket.io-client';
 import Feathers from 'feathers-client';
 import Utils from '../lib/Utils';
 
-const API_HOST = "https://protected-anchorage-55121.herokuapp.com";
+const API_HOST = "http://localhost:3030";
 
 class BaseModel {
   defaults() { return {}; }
